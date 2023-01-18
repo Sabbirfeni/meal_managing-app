@@ -1,12 +1,24 @@
+
 const MEMBER_LIST = JSON.parse(localStorage.getItem('memberList'));
+const totalDepositContainer = document.querySelector('.total_deposit_container');
 
 if(MEMBER_LIST) {
-    updateMemberList()
+    updateDashboard()
 }
 
-function updateMemberList() {
-
+function updateDashboard() {
+    let totalDeposit = 0
     MEMBER_LIST.forEach(member => {
+
+        // Get total deposit
+        if(member.deposit.length != 0) {
+            member.deposit.forEach(singleDeposit => {
+                totalDeposit += singleDeposit.depositAmount
+            })
+        }
+
+
+        // Get members
         const { id, name, phoneNumber, department, session } = member;
         const tableRow = document.createElement('tr');
         tableRow.setAttribute('data-id', id)
@@ -45,10 +57,17 @@ function updateMemberList() {
         })
 
         deleteBtn.addEventListener('click', () => {
-            tableRow.style.display = 'none';
-            deleteMemberOnStorage(id);
-        })
+            let isConfirm = confirm('Are you sure!');
+            if(isConfirm) {
+                tableRow.style.display = 'none';
+                deleteMemberOnStorage(id);
+            }
+
+        })  
     });
+
+    // Insert total deposit to element
+    totalDepositContainer.innerHTML = totalDeposit;
 }
 
 
@@ -74,12 +93,3 @@ function deleteMemberOnStorage(id) {
 
     localStorage.setItem('memberList', JSON.stringify(MEMBER_LIST))
 }
-// <tr>
-//     <td>John Doe</td>
-//     <td>john.doe@example.com</td>
-//     <td>
-//         <button class="btn btn-primary btn-sm edit-btn">Edit</button>
-//         <button class="btn btn-success btn-sm save-btn" style="display: none;">Save</button>
-//         <button class="btn btn-danger btn-sm delete-btn">Delete</button>
-//     </td>
-// </tr>

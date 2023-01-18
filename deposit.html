@@ -12,25 +12,39 @@
   </head>
   <body>
 
-
-
-
-
-
     <div class="sidebar"></div>
       
     <div class="content">
-        <h1>Total Deposit: <span class="total_deposit_container"></span></h1>
+      <form action="" id="form">
+        <label for="date">Date</label>
+        <input type="date" id="date">
+        <label for="memberName">Member</label>
+        <select id="memberName">
+          <!-- <option value="1">Sabbir</option>
+          <option value="2">Another</option> -->
+        </select>
+        <label for="depositAmount">Amount of Deposit</label>
+        <input type="text" id="depositAmount">
+        <input type="submit" value="Add">
+      </form>
+
+      <div class="deposit_history">
         <table class="table">
-            <tbody id="memberContainer" class="member_container"></tbody>
-        </table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Deposit Amount</th>
+            </tr>
+          </thead>
+          <tbody id="memberContainer" class="deposit_history-body"></tbody>
+      </table>
+      </div>
     </div>
-        
+      
 
 
-
-
-    <script type="module" src="assets/js/index.js" defer></script>
+    <script src="assets/js/deposit.js"></script>
     <script src="assets/js/static_contents.js"></script>
 
     <!-- Optional JavaScript -->

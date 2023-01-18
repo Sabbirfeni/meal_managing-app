@@ -4,7 +4,9 @@ function Member(name, phoneNumber, department, session) {
     this.name = name;
     this.phoneNumber = phoneNumber;
     this.department = department;
-    this.session =session;
+    this.session = session;
+    this.deposit = [];
+    this.meal = [];
 }
 if(!localStorage.getItem('memberList')) {
     localStorage.setItem('memberList', JSON.stringify([]))
