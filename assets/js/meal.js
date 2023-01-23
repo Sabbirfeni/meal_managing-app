@@ -1,19 +1,29 @@
+if(!localStorage.getItem('mealData')) {
+    localStorage.setItem('mealData', JSON.stringify([]));
+}
+
+
 const MEMBER_LIST = JSON.parse(localStorage.getItem('memberList'));
+const MEMBER_MEAL = JSON.parse(localStorage.getItem('mealData'))
 
 const form = document.querySelector('#form');
-
 const submitBtn = document.querySelector('#submitBtn');
 
 
 // Insert all member with input field
-let html = ``;
+let inputLabelHtml = ``;
+let tableHeadRowHtml = `<th>Date</th>`;
 MEMBER_LIST.forEach(member => {
-    html += `
+    inputLabelHtml += `
             <label for="mealNumber">${member.name}</label>
-            <input type="number" id="mealContainer" data-id='${member.id}'><br>
+            <input type="number" id="mealContainer" data-id='${member.id}' data-member_name='${member.name}'><br>
             `
+    tableHeadRowHtml += `
+                        <th data-id='${member.id}' id='members'>${member.name}</th>
+                        `
 });
-submitBtn.insertAdjacentHTML('beforebegin', html);
+submitBtn.insertAdjacentHTML('beforebegin', inputLabelHtml);
+document.querySelector('.meal_table-head--row').innerHTML = tableHeadRowHtml;
 
 
 
@@ -43,21 +53,49 @@ function isAllMealInserted() {
 }
 
 function addMeal(date) {
-
+    const dailyMeal = {
+        date: date
+    };
+    const memberMeal = []
     mealContainer.forEach(mealEl => {
-        const memberId = Number(mealEl.dataset.id);
         const mealData = {
-            mealDate: date,
+            id: Number(mealEl.dataset.id),
+            name: mealEl.dataset.member_name,
             mealQuantity: Number(mealEl.value)
         }
-
-        MEMBER_LIST.forEach(member => {
-            if(member.id === memberId) {
-                member.meal.push(mealData);
-            }
-        })
-        mealEl.value = dateEl.value = '';
+    memberMeal.push(mealData);
+    mealEl.value = dateEl.value = '';
     })
-    localStorage.setItem('memberList', JSON.stringify(MEMBER_LIST));
-    alert('Meal added')
+    dailyMeal.mealData = memberMeal;
+    MEMBER_MEAL.push(dailyMeal)
+
+    localStorage.setItem('mealData', JSON.stringify(MEMBER_MEAL));
+    showMealHistory();
+    alert('Meal added');
 }
+
+if(MEMBER_MEAL) {
+    showMealHistory()
+}
+function showMealHistory() {
+    const mealMembers = document.querySelectorAll('#members');
+    let mealRow = ``;
+    MEMBER_MEAL.forEach(dailyMeal => {
+        mealRow += `<tr>
+                    <td>${dailyMeal.date}</td>
+                    `
+            dailyMeal.mealData.forEach(singleManMeal => {
+            mealMembers.forEach(member => {
+                if(singleManMeal.id == member.dataset.id) {
+                    mealRow += `<td>${singleManMeal.mealQuantity}</td>`
+                }
+            })
+        })
+        mealRow += `</tr>`
+    })
+    document.querySelector('.meal_table-body').innerHTML = mealRow;
+}
+
+
+
+// localStorage.setItem('mealData', JSON.stringify([]))

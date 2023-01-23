@@ -2,9 +2,9 @@
 const sideBarEl = document.querySelector('.sidebar');
 const SIDEBAR_ITEMS = [
     {icon: '', itemName: 'Dashboard', url: '/index.html'},
-    {icon: '', itemName: 'Add Member', url: '/add-member.html'},
-    {icon: '', itemName: 'Deposit', url: '/deposit.html'},
     {icon: '', itemName: 'Meal', url: '/meal.html'},
+    {icon: '', itemName: 'Deposit', url: '/deposit.html'},
+    {icon: '', itemName: 'Add Member', url: '/add-member.html'}
 ]
 
 // insert sidebar item to sidebar element
