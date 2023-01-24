@@ -1,12 +1,19 @@
 
 const MEMBER_LIST = JSON.parse(localStorage.getItem('memberList'));
-const totalDepositContainer = document.querySelector('.total_deposit_container');
+const MEAL_COST = JSON.parse(localStorage.getItem('mealCost'));
+const MEAL_DATA = JSON.parse(localStorage.getItem('mealData'));
 
-if(MEMBER_LIST) {
-    updateDashboard()
+const totalDepositContainer = document.querySelector('.total_deposit_container');
+const totalCostContainer =  document.querySelector('.total_costing_container');
+const currentBalanceContainer = document.querySelector('.current_balance_container');
+const totalMealContainer = document.querySelector('.total_meal_container');
+const mealRateContainer = document.querySelector('.meal_rate_container');
+
+if(MEMBER_LIST && MEAL_COST && MEAL_DATA) {
+    updateDashboard(totalCost(), totalMeal())
 }
 
-function updateDashboard() {
+function updateDashboard(totalCost, totalMeal) {
     let totalDeposit = 0
     MEMBER_LIST.forEach(member => {
 
@@ -17,6 +24,16 @@ function updateDashboard() {
             })
         }
 
+        // Insert total deposit to element
+        totalDepositContainer.innerHTML = totalDeposit +'/-';
+        // Insert total cost to element
+        totalCostContainer.innerHTML = totalCost +'/-';
+        // Insert current balance to element
+        currentBalanceContainer.innerHTML = totalDeposit - totalCost +'/-';
+        // Insert total meal to element
+        totalMealContainer.innerHTML = totalMeal;
+        // Insert meal rate to element
+        mealRateContainer.innerHTML = parseFloat(totalCost / totalMeal).toFixed(2) +'/-';
 
         // Get members
         const { id, name, phoneNumber, department, session } = member;
@@ -66,10 +83,8 @@ function updateDashboard() {
         })  
     });
 
-    // Insert total deposit to element
-    totalDepositContainer.innerHTML = totalDeposit;
-}
 
+}
 
 function updateMemberStorage(id, nameEl, phoneEl, departmentEl, sessionEl) {
     MEMBER_LIST.forEach(member => {
@@ -92,4 +107,24 @@ function deleteMemberOnStorage(id) {
     })
 
     localStorage.setItem('memberList', JSON.stringify(MEMBER_LIST))
+}
+
+function totalCost() {
+    let totalCost = 0;
+    if(MEMBER_LIST.length != 0) {
+        MEAL_COST.forEach(dailyCost => {
+            totalCost += Number(dailyCost.amountOfCost);
+        })
+    }
+    return totalCost;
+}
+
+function totalMeal() {
+    let totalMeal = 0;
+    MEAL_DATA.forEach(dailyMeal => {
+        dailyMeal.mealData.forEach(meal => {
+            totalMeal += meal.mealQuantity;
+        })
+    })
+    return totalMeal;
 }
