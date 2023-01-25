@@ -80,7 +80,10 @@ function updateDashboard(totalCost, totalMeal) {
         // Insert total meal to element
         totalMealContainer.innerHTML = totalMeal;
         // Insert meal rate to element
-        const mealRate = parseFloat(totalCost / totalMeal).toFixed(2)
+        let mealRate = 0;
+        if(totalCost != 0 && totalMeal != 0) {
+            mealRate = parseFloat(totalCost / totalMeal).toFixed(2)
+        }
         mealRateContainer.innerHTML = mealRate+'/-';
         showMembersMealInfo(mealRate);
     });
@@ -133,6 +136,7 @@ function totalMeal() {
 
 function showMembersMealInfo(mealRate) {
     let html = ``;
+    if(MEMBER_LIST.length != 0) {
     MEMBER_LIST.forEach(member => {
         let memberTotalDeposit = 0;
         member.deposit.forEach(singleDeposit => {
@@ -140,6 +144,7 @@ function showMembersMealInfo(mealRate) {
         })
 
         let totalMemberMeal = 0;
+        if(MEAL_DATA.length != 0) {
         MEAL_DATA.forEach(dailyMeal => {
             dailyMeal.mealData.forEach(singleMemberMeal => {
                 if(singleMemberMeal.id == member.id) {
@@ -147,7 +152,7 @@ function showMembersMealInfo(mealRate) {
                 }
             })
             // console.log(dailyMeal.mealData)
-        })
+        })}
         
         const memberMealCost = parseFloat(totalMemberMeal * mealRate).toFixed(2);
         const willHave = parseFloat(memberTotalDeposit - memberMealCost).toFixed(2);
@@ -156,12 +161,24 @@ function showMembersMealInfo(mealRate) {
                 <tr>
                     <td>${member.name}</td>
                     <td>${memberTotalDeposit}</td>
-                    <td>${memberMealCost}</td>
+                    <td>${totalMemberMeal}</td>
+                    <td>${Number(memberMealCost) ? memberMealCost : 0}</td>
                     <td>${memberTotalDeposit < memberMealCost ? haveToGive : 0}</td>
                     <td>${memberTotalDeposit > memberMealCost ? willHave : 0}</td>
                 </tr>
                 `
-    })
+                console.log(memberMealCost)
+    })}
 
     document.querySelector('.member_meal-data--tableBody').innerHTML = html;
+}
+
+document.querySelector('#resetBtn').addEventListener('click', () => {
+    resetStorage()
+})
+
+function resetStorage() {
+    localStorage.setItem('memberList', JSON.stringify([]));
+    localStorage.setItem('mealCost', JSON.stringify([]));
+    localStorage.setItem('mealData', JSON.stringify([]));
 }
