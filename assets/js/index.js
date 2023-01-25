@@ -24,17 +24,6 @@ function updateDashboard(totalCost, totalMeal) {
             })
         }
 
-        // Insert total deposit to element
-        totalDepositContainer.innerHTML = totalDeposit +'/-';
-        // Insert total cost to element
-        totalCostContainer.innerHTML = totalCost +'/-';
-        // Insert current balance to element
-        currentBalanceContainer.innerHTML = totalDeposit - totalCost +'/-';
-        // Insert total meal to element
-        totalMealContainer.innerHTML = totalMeal;
-        // Insert meal rate to element
-        mealRateContainer.innerHTML = parseFloat(totalCost / totalMeal).toFixed(2) +'/-';
-
         // Get members
         const { id, name, phoneNumber, department, session } = member;
         const tableRow = document.createElement('tr');
@@ -80,7 +69,20 @@ function updateDashboard(totalCost, totalMeal) {
                 deleteMemberOnStorage(id);
             }
 
-        })  
+        }) 
+
+        // Insert total deposit to element
+        totalDepositContainer.innerHTML = totalDeposit +'/-';
+        // Insert total cost to element
+        totalCostContainer.innerHTML = totalCost +'/-';
+        // Insert current balance to element
+        currentBalanceContainer.innerHTML = totalDeposit - totalCost +'/-';
+        // Insert total meal to element
+        totalMealContainer.innerHTML = totalMeal;
+        // Insert meal rate to element
+        const mealRate = parseFloat(totalCost / totalMeal).toFixed(2)
+        mealRateContainer.innerHTML = mealRate+'/-';
+        showMembersMealInfo(mealRate);
     });
 
 
@@ -127,4 +129,39 @@ function totalMeal() {
         })
     })
     return totalMeal;
+}
+
+function showMembersMealInfo(mealRate) {
+    let html = ``;
+    MEMBER_LIST.forEach(member => {
+        let memberTotalDeposit = 0;
+        member.deposit.forEach(singleDeposit => {
+            memberTotalDeposit += singleDeposit.depositAmount
+        })
+
+        let totalMemberMeal = 0;
+        MEAL_DATA.forEach(dailyMeal => {
+            dailyMeal.mealData.forEach(singleMemberMeal => {
+                if(singleMemberMeal.id == member.id) {
+                    totalMemberMeal += singleMemberMeal.mealQuantity;
+                }
+            })
+            // console.log(dailyMeal.mealData)
+        })
+        
+        const memberMealCost = parseFloat(totalMemberMeal * mealRate).toFixed(2);
+        const willHave = parseFloat(memberTotalDeposit - memberMealCost).toFixed(2);
+        const haveToGive = parseFloat(memberMealCost - memberTotalDeposit).toFixed(2);
+        html += `
+                <tr>
+                    <td>${member.name}</td>
+                    <td>${memberTotalDeposit}</td>
+                    <td>${memberMealCost}</td>
+                    <td>${memberTotalDeposit < memberMealCost ? haveToGive : 0}</td>
+                    <td>${memberTotalDeposit > memberMealCost ? willHave : 0}</td>
+                </tr>
+                `
+    })
+
+    document.querySelector('.member_meal-data--tableBody').innerHTML = html;
 }
